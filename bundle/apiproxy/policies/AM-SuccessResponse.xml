@@ -1,0 +1,15 @@
+<AssignMessage name='AM-SuccessResponse'>
+  <DisplayName>AM-SuccessResponse</DisplayName>
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+  <Set>
+    <Payload contentType='application/json'
+             variablePrefix='%' variableSuffix='#'><![CDATA[{
+  "algorithm": "%hash_algorithm#",
+  "hash_hex": "%hash_hash-hex#",
+  "hash_b64": "%hash_hash-b64#"
+}
+]]></Payload>
+    <StatusCode>200</StatusCode>
+    <ReasonPhrase>OK</ReasonPhrase>
+  </Set>
+</AssignMessage>

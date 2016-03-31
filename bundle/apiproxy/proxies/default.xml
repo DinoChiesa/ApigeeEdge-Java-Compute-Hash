@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+  <Description>Default Proxy</Description>
+
+  <HTTPProxyConnection>
+    <BasePath>/hash-trial</BasePath>
+    <Properties/>
+    <VirtualHost>default</VirtualHost>
+  </HTTPProxyConnection>
+
+  <FaultRules/>
+
+  <PreFlow>
+    <Request>
+    </Request>
+  </PreFlow>
+
+  <Flows>
+
+    <Flow name="compute a hash">
+      <Description>compute a hash on a payload</Description>
+      <Request>
+        <Step>
+          <Name>RF-BadRequest</Name>
+          <Condition>request.queryparam.algorithm = null</Condition>
+        </Step>
+        <Step>
+          <Name>Java-HashCompute</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>AM-SuccessResponse</Name>
+        </Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/compute") and (request.verb = "POST")</Condition>
+    </Flow>
+
+    <Flow name="verify a hash on a payload">
+      <Description>verify a hash payload</Description>
+      <Request>
+        <Step>
+          <Name>RF-BadRequest</Name>
+          <Condition>request.queryparam.algorithm = null OR request.queryparam.expectedhash = null</Condition>
+        </Step>
+        <Step>
+          <Name>Java-HashVerify</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>AM-SuccessResponse</Name>
+        </Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/verify") and (request.verb = "POST")</Condition>
+    </Flow>
+
+    <Flow name='unknown'>
+      <Description>unknown request</Description>
+      <Request>
+        <Step>
+          <Name>RF-UnknownRequest</Name>
+        </Step>
+      </Request>
+    </Flow>
+  </Flows>
+
+  <RouteRule name="Loopback"/>
+
+</ProxyEndpoint>

@@ -1,0 +1,10 @@
+<JavaCallout name="Java-HashCompute">
+  <Properties>
+    <Property name='debug'>true</Property>
+    <Property name='apply-templates'>true</Property>
+    <Property name='algorithm'>{request.queryparam.algorithm}</Property>
+    <Property name='string-to-hash'>{request.content}</Property>
+  </Properties>
+  <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
+  <ResourceURL>java://edge-callout-hash-1.0-SNAPSHOT.jar</ResourceURL>
+</JavaCallout>

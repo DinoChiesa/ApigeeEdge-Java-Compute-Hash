@@ -1,0 +1,12 @@
+<JavaCallout name="Java-HashVerify">
+  <Properties>
+    <Property name='debug'>true</Property>
+    <Property name='apply-templates'>true</Property>
+    <Property name='algorithm'>{request.queryparam.algorithm}</Property>
+    <Property name='expected-hash'>{request.queryparam.expectedhash}</Property>
+    <Property name='expected-hash-format'>hex</Property>
+    <Property name='string-to-hash'>{request.content}</Property>
+  </Properties>
+  <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
+  <ResourceURL>java://edge-callout-hash-1.0-SNAPSHOT.jar</ResourceURL>
+</JavaCallout>
