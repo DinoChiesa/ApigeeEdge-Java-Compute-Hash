@@ -137,6 +137,7 @@ public class HashGeneratorCallout implements Execution {
 
     private void clearVariables(MessageContext msgCtxt) {
         msgCtxt.removeVariable(varName("error"));
+        msgCtxt.removeVariable(varName("exception"));
         msgCtxt.removeVariable(varName("stacktrace"));
         msgCtxt.removeVariable(varName("javaizedAlg"));
         msgCtxt.removeVariable(varName("alg"));
@@ -199,7 +200,18 @@ public class HashGeneratorCallout implements Execution {
             }
         }
         catch (Exception e){
-            msgCtxt.setVariable(varName("error"), e.getMessage());
+            if (getDebug()) {
+                System.out.println(ExceptionUtils.getStackTrace(e));
+            }
+            String error = e.toString();
+            msgCtxt.setVariable(varName("exception"), error);
+            int ch = error.lastIndexOf(':');
+            if (ch >= 0) {
+                msgCtxt.setVariable(varName("error"), error.substring(ch+2).trim());
+            }
+            else {
+                msgCtxt.setVariable(varName("error"), error);
+            }
             msgCtxt.setVariable(varName("stacktrace"), ExceptionUtils.getStackTrace(e));
             return ExecutionResult.ABORT;
         }
