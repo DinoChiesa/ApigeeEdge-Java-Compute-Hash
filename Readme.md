@@ -3,8 +3,10 @@
 This directory contains the Java source code for 
 a Java callout for Apigee Edge that does Verification of Hashes, such as MD5, and SHA{256,384,512}.
 
-This material is copyright 2015,2016 Apigee Corporation. 
-and is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE) file. 
+## License
+
+This material is copyright 2015,2016 Apigee Corporation, 2017 Google Inc.
+and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java code as well as the API Proxy configuration. 
 
 
 ## Usage:
