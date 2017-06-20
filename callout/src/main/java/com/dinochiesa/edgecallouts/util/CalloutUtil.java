@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Collections;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public final class CalloutUtil {
+    private static final String variableReferencePatternString = "(.*?)\\{([^\\{\\} ]+?)\\}(.*?)";
+    private static final Pattern variableReferencePattern = Pattern.compile(variableReferencePatternString);
 
     public static Map<String,String> genericizeMap(Map properties) {
         // convert an untyped Map to a generic map
@@ -50,24 +54,25 @@ public final class CalloutUtil {
     }
 
     /**
-     * Used to resolve dynamic runtime variables from the Apigee context.
-     * If a variable is surrounded with curly braces, it is interpreted
-     * as a dynamic variable and the value is looked up in the context.
-     * Otherwise, it returns the value passed in.
-     * @param variableName The variable name to be resolved
-     * @param ctx The Apigee context object
-     * @return The resolved variable value
+     * Used to resolve strings potentially containing references to variables available in the Apigee context.
+     * If the string contains a variable name surrounded with curly braces, it is interpreted
+     * as a dynamic variable and the reference is replaced with the value obtained from the context.
+     *
+     * @param spec The string potentially containing variable names
+     * @param msgCtxt The Apigee context object
+     * @return The value with variable references resolved
      */
-    public static String resolveVariableFromContext(String variableName, MessageContext ctx) {
-        if (StringUtils.isBlank(variableName)) {
-            throw new IllegalArgumentException("variableName may not be null or empty");
+    public static String resolveVariableFromContext(String spec, MessageContext msgCtxt) {
+        Matcher matcher = variableReferencePattern.matcher(spec);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "");
+            sb.append(matcher.group(1));
+            sb.append((String) msgCtxt.getVariable(matcher.group(2)));
+            sb.append(matcher.group(3));
         }
-        if(ctx == null) {
-            throw new IllegalStateException("Message context may not be null");
-        }
-        if (variableName.startsWith("{") && variableName.endsWith("}") && variableName.indexOf(" ") == -1)
-            return ctx.getVariable(stripStartAndEnd(variableName, "{", "}"));
-        return variableName;
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 
 }

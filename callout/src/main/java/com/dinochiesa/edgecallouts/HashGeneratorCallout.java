@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Arrays;
 import java.security.MessageDigest;
 
 import org.apache.commons.codec.binary.Hex;
@@ -20,7 +22,6 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import com.dinochiesa.edgecallouts.util.TemplateString;
 import com.dinochiesa.edgecallouts.util.CalloutUtil;
 
 @IOIntensive
@@ -28,15 +29,15 @@ public class HashGeneratorCallout implements Execution {
     private static final String varprefix = "hash_";
     private static final String defaultAlgorithm = "SHA-256";
     private static final String TRUE = "true";
-
     private static Pattern algMd5Pattern = Pattern.compile("^(MD)-?(5)$", Pattern.CASE_INSENSITIVE);
     private static Pattern algShaPattern = Pattern.compile("^(SHA)-?(1|224|256|384|512)$", Pattern.CASE_INSENSITIVE);
-
     private final Map<String,String> properties;
-    private static String varName(String s) {return varprefix + s;}
+
     public HashGeneratorCallout(Map properties) {
         this.properties = CalloutUtil.genericizeMap(properties);
     }
+
+    private static String varName(String s) { return varprefix + s; }
 
     private boolean getWantApplyTemplates() {
         String prop = properties.get("apply-templates");
@@ -60,16 +61,8 @@ public class HashGeneratorCallout implements Execution {
             return msg;
         }
 
-        // Replace ALL curly-braced items in the string-to-sign
-        // This is like resolveVariableFromContext on steroids.
-        TemplateString ts = new TemplateString(msg);
-        Map<String,String> valuesMap = new HashMap<String,String>();
-        for (String s : ts.variableNames) {
-            valuesMap.put(s, (String) msgCtxt.getVariable(s));
-        }
-        StrSubstitutor sub = new StrSubstitutor(valuesMap);
-        String resolvedString = sub.replace(ts.template);
-        return resolvedString;
+        msg = CalloutUtil.resolveVariableFromContext(msg, msgCtxt);
+        return msg;
     }
 
     private String getExpectedHash(MessageContext msgCtxt) throws Exception {
@@ -96,16 +89,11 @@ public class HashGeneratorCallout implements Execution {
         return format.trim();
     }
 
-    private boolean getDebug(MessageContext msgCtxt) throws Exception {
-        String flag = this.properties.get("debug");
-        if (flag == null || flag.equals("")) {
-            return false;
-        }
-        flag = CalloutUtil.resolveVariableFromContext(flag, msgCtxt);
-        if (flag == null || flag.equals("")) {
-            return false;
-        }
-        return flag.equalsIgnoreCase(TRUE);
+    private boolean getDebug() {
+        String value = (String) this.properties.get("debug");
+        if (value == null) return false;
+        if (value.trim().toLowerCase().equals("true")) return true;
+        return false;
     }
 
     private String getAlgorithm(MessageContext msgCtxt) throws Exception {
@@ -120,8 +108,7 @@ public class HashGeneratorCallout implements Execution {
         return alg;
     }
 
-    private static String javaizeAlgorithmName(MessageContext msgCtxt,String alg)
-        throws IllegalStateException {
+    private static String javaizeAlgorithmName(MessageContext msgCtxt,String alg) throws IllegalStateException {
         Matcher m = algShaPattern.matcher(alg);
         if (!m.matches()) {
             m = algMd5Pattern.matcher(alg);
@@ -136,14 +123,9 @@ public class HashGeneratorCallout implements Execution {
     }
 
     private void clearVariables(MessageContext msgCtxt) {
-        msgCtxt.removeVariable(varName("error"));
-        msgCtxt.removeVariable(varName("exception"));
-        msgCtxt.removeVariable(varName("stacktrace"));
-        msgCtxt.removeVariable(varName("javaizedAlg"));
-        msgCtxt.removeVariable(varName("alg"));
-        msgCtxt.removeVariable(varName("string-to-hash"));
-        msgCtxt.removeVariable(varName("hash-hex"));
-        msgCtxt.removeVariable(varName("hash-b64"));
+        List<String> names = Arrays.asList("error", "exception", "stacktrace", "javaizedAlg", "alg",
+                                             "string-to-hash","hash-hex", "hash-b64");
+        names.forEach(x -> msgCtxt.removeVariable(varName(x)));
     }
 
     public ExecutionResult execute(MessageContext msgCtxt,
@@ -152,7 +134,7 @@ public class HashGeneratorCallout implements Execution {
             clearVariables(msgCtxt);
             String stringToHash = getStringToHash(msgCtxt);
             String algorithm = getAlgorithm(msgCtxt);
-            boolean debug = getDebug(msgCtxt);
+            boolean debug = getDebug();
             if (debug) {
                 msgCtxt.setVariable(varName("algorithm"), algorithm);
             }
