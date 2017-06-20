@@ -16,7 +16,7 @@ and is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE) file.
  mvn clean package 
 ```
 
-3. if you edit proxy bundles offline, copy the resulting jar file, available in  out/edge-callout-hash.jar to your apiproxy/resources/java directory.  If you don't edit proxy bundles offline, upload the jar file into the API Proxy via the Edge API Proxy Editor . 
+3. if you edit proxy bundles offline, copy the resulting jar file, available in  out/edge-callout-hash-1.0.2.jar to your apiproxy/resources/java directory.  If you don't edit proxy bundles offline, upload the jar file into the API Proxy via the Edge API Proxy Editor . 
 
 5. include TWO Java callout policies in your
    apiproxy/resources/policies directory. One will do computation of hashes,
@@ -33,9 +33,10 @@ and is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE) file.
        <Property name='string-to-hash'>{request.content}</Property>
      </Properties>
      <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
-     <ResourceURL>java://edge-callout-hash-1.0-SNAPSHOT.jar</ResourceURL>
+     <ResourceURL>java://edge-callout-hash-1.0.2.jar</ResourceURL>
    </JavaCallout>
-   ```  
+   ```
+   
    The second should look like this: 
    ```xml
    <JavaCallout name="Java-HashVerify">
@@ -48,15 +49,14 @@ and is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE) file.
        <Property name='string-to-hash'>{request.content}</Property>
      </Properties>
      <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
-     <ResourceURL>java://edge-callout-hash-1.0-SNAPSHOT.jar</ResourceURL>
+     <ResourceURL>java://edge-callout-hash-1.0.2.jar</ResourceURL>
    </JavaCallout>
    ```
    
 5. use the Edge UI, or a command-line tool like [pushapi](https://github.com/carloseberhardt/apiploy) or similar to
    import the proxy into an Edge organization, and then deploy the proxy . 
 
-6. Use a client to generate and send http requests with appropriate HTTP
-Signatures, to the proxy.  Example:
+6. Use a client to generate and send http requests with a payload, to the proxy.  Example:
    ```
     curl -i -H 'content-type: text/plain' -X POST \
        'http://ORGNAME-ENVNAME.apigee.net/hash-trial/compute?algorithm=sha256' \
