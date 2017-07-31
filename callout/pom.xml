@@ -4,7 +4,7 @@
 
     <groupId>com.dinochiesa</groupId>
     <artifactId>edge-callout-hash</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>EdgeCustomHash</name>
     <url>http://maven.apache.org</url>
     <packaging>jar</packaging>
@@ -30,16 +30,13 @@
             <artifactId>commons-lang</artifactId>
             <version>${apache.commons.lang.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${apache.commons.codec.version}</version>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+          <version>${apache.commons.codec.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${apache.httpclient.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.apigee.edge</groupId>
             <artifactId>message-flow</artifactId>
@@ -137,9 +134,9 @@
                 <copy todir="${apiproxy.java.rsrc.dir}">
                   <fileset dir="${project.build.directory}">
                     <include name="${project.artifactId}-${version}.jar"/>
-                    <!-- copy any required dependencies tht are not
-                    already included in the Edge runtime: -->
-                    <!-- <include name="lib/commons-net-3.3.jar"/> -->
+                    <!-- also copy any required runtime dependencies: -->
+                    <include name="lib/commons-codec-1.10.jar"/>
+                    <include name="lib/commons-lang-2.6.jar"/>
                     <!--                    -->
                   </fileset>
                   <mapper type="flatten"/>
@@ -157,8 +154,4 @@
       </plugins>
     </build>
 
-    <!--scm>
-        <connection>scm:git:git://bitbucket.org/starbuckswme/apigee-http-signature</connection>
-        <developerConnection>scm:git:git://bitbucket.org/starbuckswme/apigee-http-signature</developerConnection>
-    </scm-->
 </project>

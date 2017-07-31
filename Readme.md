@@ -18,7 +18,7 @@ and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java 
  mvn clean package 
 ```
 
-3. if you edit proxy bundles offline, copy the resulting jar file, available in  out/edge-callout-hash-1.0.2.jar to your apiproxy/resources/java directory.  If you don't edit proxy bundles offline, upload the jar file into the API Proxy via the Edge API Proxy Editor . 
+3. if you edit proxy bundles offline, copy the resulting jar file, available in  out/edge-callout-hash-1.0.3.jar to your apiproxy/resources/java directory.  If you don't edit proxy bundles offline, upload the jar file into the API Proxy via the Edge API Proxy Editor . 
 
 5. include TWO Java callout policies in your
    apiproxy/resources/policies directory. One will do computation of hashes,
@@ -35,7 +35,7 @@ and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java 
        <Property name='string-to-hash'>{request.content}</Property>
      </Properties>
      <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
-     <ResourceURL>java://edge-callout-hash-1.0.2.jar</ResourceURL>
+     <ResourceURL>java://edge-callout-hash-1.0.3.jar</ResourceURL>
    </JavaCallout>
    ```
    
@@ -51,7 +51,7 @@ and is licensed under the [Apache 2.0 License](LICENSE). This includes the Java 
        <Property name='string-to-hash'>{request.content}</Property>
      </Properties>
      <ClassName>com.dinochiesa.edgecallouts.HashGeneratorCallout</ClassName>
-     <ResourceURL>java://edge-callout-hash-1.0.2.jar</ResourceURL>
+     <ResourceURL>java://edge-callout-hash-1.0.3.jar</ResourceURL>
    </JavaCallout>
    ```
    
